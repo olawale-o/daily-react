@@ -1,48 +1,37 @@
 import { useState } from "react";
 
-import { MONTHS, DAYS_OF_THE_WEEK } from "../constants/constants";
+import { eachDayOfInterval, endOfMonth, format, startOfMonth, isToday, getDay, getDate } from "date-fns";
+
+import { DAYS_OF_THE_WEEK } from "../constants/constants";
 
 import style from "./style.module.css";
 
+const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
+
 const CalendarPreviousDays = ({ firstDayOfTheMonth, lastDateOfLastMonth }) => {
-  const prevDays = Array.from({ length: firstDayOfTheMonth + 1 }, (v, i) => lastDateOfLastMonth - i + 1);
-  prevDays.shift();
+  const prevDays = range(firstDayOfTheMonth, 1, -1);
   return (
     <>
-      {prevDays.map((day, index) => (<li key={`prev-${index}`} className={style.inactive}>{day}</li>))}
+      {prevDays.map((day, index) => (<li key={`prev-${index}`} className={style.inactive}>{lastDateOfLastMonth - day + 1}</li>))}
     </>
   );
 };
 
 const CalendarNextDays = ({ lastDayOfMonth }) => {
-  const nextDays = [];
-  for (let i = lastDayOfMonth;  i < 6; i++) {
-    nextDays.push(i - lastDayOfMonth + 1);
-  }
+  const nextDays = range(lastDayOfMonth, 5, 1);
   return (
     <>
-      {nextDays.map((day, index) => (<li key={`next-${index}`} className={style.inactive}>{day}</li>))}
+      {nextDays.map((day, index) => (<li key={`next-${index}`} className={style.inactive}>{day - lastDayOfMonth + 1}</li>))}
     </>
   );
 };
 
-const CalendarDays = ({ lastDateOfMonth, currentMonth, currentYear }) => {
-  const currentTime = new Date();
-  const currentDate = currentTime.getDate();
-  const currentDateYear = currentTime.getFullYear();
-  const currentDateMonth = currentTime.getMonth();
-  const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
-  const currentDays = range(1, lastDateOfMonth, 1);
-
-  const isToday = (day) => {
-    return day === currentDate && currentMonth === currentDateMonth && currentYear === currentDateYear;
-  };
-
+const CalendarDays = ({ days }) => {
   return (
     <>
-      {currentDays.map((day, index) => (
-        <li key={index} className={`${ isToday(day) ? style.today : ""}`}>
-          {day}
+      {days.map((day, index) => (
+        <li key={index} className={`${isToday(day) ? style.today : ""}`}>
+          {format(day, "d")}
         </li>
       ))}
     </>
@@ -50,19 +39,17 @@ const CalendarDays = ({ lastDateOfMonth, currentMonth, currentYear }) => {
 }
 
 const Calendar = ({
-  currentMonth,
-  currentYear,
   firstDayOfTheMonth,
-  lastDateOfMonth,
   lastDayOfMonth,
-  lastDateOfLastMonth
+  lastDateOfLastMonth,
+  days,
 }) => {
 
   return (
     <ul className={style.days}>
       <>
         <CalendarPreviousDays firstDayOfTheMonth={firstDayOfTheMonth} lastDateOfLastMonth={lastDateOfLastMonth} />
-        <CalendarDays lastDateOfMonth={lastDateOfMonth} currentMonth={currentMonth} currentYear={currentYear} />
+        <CalendarDays days={days} />
         <CalendarNextDays lastDayOfMonth={lastDayOfMonth} />
       </>
     </ul>
@@ -75,10 +62,18 @@ const CalendarWrapper = ({ startDate = new Date() }) => {
   let currentYear = date.getFullYear();
   let currentMonth = date.getMonth();
 
-  let firstDayOfTheMonth = new Date(currentYear, currentMonth, 1).getDay();
-  let lastDateOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  let lastDayOfMonth = new Date(currentYear, currentMonth, lastDateOfMonth).getDay();
-  let lastDateOfLastMonth = new Date(currentYear, currentMonth, 0).getDate();
+  const firstFullDate = startOfMonth(new Date(currentYear, currentMonth + 1, 0));
+  const lastFullDate = endOfMonth(new Date(currentYear, currentMonth + 1, 0));
+
+  let firstDayOfTheMonth = getDay(startOfMonth(new Date(currentYear, currentMonth, 1)));
+  let lastDateOfMonth = getDate(lastFullDate);
+  let lastDayOfMonth = getDay(endOfMonth(new Date(currentYear, currentMonth, lastDateOfMonth)));
+  let lastDateOfLastMonth = getDate(endOfMonth(new Date(currentYear, currentMonth, 0)));
+
+  const days = eachDayOfInterval({
+    start: firstFullDate,
+    end: lastFullDate
+  });
 
   const handleDateChange = (dir) => {
     currentMonth = dir === "prev" ? currentMonth - 1 : currentMonth + 1;
@@ -94,7 +89,7 @@ const CalendarWrapper = ({ startDate = new Date() }) => {
   return (
     <div className={style.wrapper}>
       <header className={style.header}>
-        <p className={style.current_date}>{MONTHS[currentMonth]}{' '}{currentYear}</p>
+        <p className={style.current_date}>{format(date, "MMM yyyy")}</p>
         <div className={style.icons}>
           <button type="button" className={`${style.icon} ${style.prev}`} onClick={() => handleDateChange("prev")}>
             <i className='bx bx-chevron-left'></i>
@@ -109,12 +104,10 @@ const CalendarWrapper = ({ startDate = new Date() }) => {
           {DAYS_OF_THE_WEEK.map((week) => (<li key={week.id}>{week.short}</li>))}
         </ul>
         <Calendar
-          currentMonth={currentMonth}
-          currentYear={currentYear}
           firstDayOfTheMonth={firstDayOfTheMonth}
-          lastDateOfMonth={lastDateOfMonth}
           lastDayOfMonth={lastDayOfMonth}
           lastDateOfLastMonth={lastDateOfLastMonth}
+          days={days}
         />
       </div>
     </div>
