@@ -1,0 +1,86 @@
+.wrapper {
+  background: #fff;
+  width: 450px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px 10px;
+}
+
+.current_date {
+  font-size: 1.45rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #f2f2f2;
+  text-align: center;
+  line-height: 38px;
+  margin: 0 1px;
+}
+
+.icon:last-child {
+  margin-right: -10px;
+}
+
+.calendar {
+  padding: 20px;
+}
+
+.weeks li {
+  font-weight: 500;
+}
+
+.days {
+  margin-bottom: 20px;
+}
+
+.days li {
+  margin-top: 30px;
+  z-index: 1;
+}
+
+.wrapper ul {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+li {
+  position: relative;
+  width: calc(100% / 7);
+}
+
+.days li.inactive {
+  color: #aaa;
+}
+
+.days li.today {
+  color: #fff;
+}
+
+.days li::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  content: "";
+  width: 40px;
+  height: 40px;
+  z-index: -1;
+}
+
+.days li:hover:before {
+  background: #f2f2f2; 
+}
+
+.days li.today::before {
+  background: #9b59b6
+}
