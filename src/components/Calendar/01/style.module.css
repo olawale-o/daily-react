@@ -66,6 +66,10 @@ li {
   color: #fff;
 }
 
+.days li.booked {
+  color: #fff
+}
+
 .days li::before {
   position: absolute;
   top: 50%;
@@ -83,4 +87,49 @@ li {
 
 .days li.today::before {
   background: #9b59b6
+}
+
+.days li.booked::before {
+  background: green;
+}
+
+.days li.booked_today::before {
+  background: #000;
+}
+
+.legends {
+  padding-block: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.div {
+  width: 20px;
+  height: 20px;
+}
+
+.booking {
+  background-color: green;
+}
+
+.booking_today {
+  background-color: #000;
+}
+
+.reservation {
+  background-color: yellow;
+}
+
+.reservation_today {
+  background-color: yellowgreen;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.name {
+  font-size: 12px;
 }
