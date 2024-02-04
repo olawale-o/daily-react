@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { eachDayOfInterval, endOfMonth, format, startOfMonth, isToday, getDay, getDate, isSameDay } from "date-fns";
+import { eachDayOfInterval, endOfMonth, format, startOfMonth, isToday, getDay, getDate } from "date-fns";
 
 import { DAYS_OF_THE_WEEK } from "../constants/constants";
 
