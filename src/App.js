@@ -1,4 +1,4 @@
-import { CalendarWrapper } from './components/Calendar/01/Calendar';
+import { CalendarWrapper } from './components/Calendar/01/CalendarWrapper';
 
 function App() {
   return (
